@@ -1,0 +1,101 @@
+syntax = "proto3";
+
+package proto;
+option go_package = ".;proto";
+
+message Empty{}
+
+// 客户端操作类型
+enum ClientAction {
+    ROTATE_LEFT = 0;       // 向左旋转
+    ROTATE_RIGHT = 1;      // 向右旋转
+    MOVE_LEFT = 2;         // 向左移动
+    MOVE_RIGHT = 3;        // 向右移动
+    SOFT_DROP_DOWN = 4;    // 软下落（按下）
+    SOFT_DROP = 5;         // 软下落（长按）
+    HARD_DROP = 6;         // 快下落（瞬间下落并锁定）
+    SAVE = 7;              // 挂起方块
+
+    NOTHING = 8;           // 无操作（用于同步）
+}
+
+// 方块
+enum BlockState{
+    CREATE = 0;
+    NORMAL = 1;
+    DOWN = 2;
+}
+
+// 客户端操作消息
+message BlockInfo {
+    int32 shape = 1;      // 方块形状
+    BlockState state = 5;      // 该帧方块状态
+}
+
+// 消除事件
+message ClearEvent {
+    repeated float y = 1;        // 消除发生的y坐标
+}
+
+// 客户端初始化信息
+message ClientInit {
+    int32 player_id = 1;        // 玩家ID
+    int32 random_seed = 2;      // 初始随机数种子
+    repeated int32 blocks = 3;  // 初始方块生成的索引
+}
+
+// 客户端帧更新数据
+message FrameUpdate {
+    int32 frame_number = 1;     // 当前帧编号
+    int32 player_id = 2;        // 玩家ID
+    ClientAction action = 3;    // 玩家操作
+    BlockInfo block_info = 5; // 当前方块的状态
+    ClearEvent clear_event = 6; // 消除事件
+}
+
+message SyncFrameReply {
+    repeated FrameUpdate frames = 1;
+}
+
+// 匹配成功通知
+message MatchSuccess {
+    int32 opponent_id = 2; // 对手 ID
+}
+
+// 等待匹配请求
+message WaitForMatchRequest {
+    int32 player_id = 1; // 玩家 ID
+}
+
+message SyncInitRequest{
+    int32 player_id = 1;
+}
+
+message SyncInitReply{
+    repeated ClientInit clients = 1;
+}
+
+message SyncFrameRequest{
+    int32 player_id = 1;
+}
+
+// gRPC 服务定义
+service TetrisService {
+    //检测是否接通
+    rpc Ping(Empty) returns (Empty);
+
+    // 等待匹配（流式 RPC）
+    rpc WaitForMatch(WaitForMatchRequest) returns (stream MatchSuccess);
+
+    // 客户端初始化
+    rpc InitGame(ClientInit) returns (Empty);
+
+    // 同步其他客户端的初始化数据
+    rpc SyncInit(SyncInitRequest) returns (SyncInitReply);
+
+    // 客户端发送当前帧数据
+    rpc SendFrame(FrameUpdate) returns (Empty);
+
+    // 同步客户端
+    rpc SyncFrame(SyncFrameRequest) returns (stream SyncFrameReply);
+}
