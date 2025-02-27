@@ -53,10 +53,6 @@ message FrameUpdate {
     ClearEvent clear_event = 6; // 消除事件
 }
 
-message SyncFrameReply {
-    repeated FrameUpdate frames = 1;
-}
-
 // 匹配成功通知
 message MatchSuccess {
     int32 opponent_id = 2; // 对手 ID
