@@ -97,5 +97,5 @@ service TetrisService {
     rpc SendFrame(FrameUpdate) returns (Empty);
 
     // 同步客户端
-    rpc SyncFrame(SyncFrameRequest) returns (stream SyncFrameReply);
+    rpc SyncFrame(SyncFrameRequest) returns (stream FrameUpdate);
 }
