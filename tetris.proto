@@ -44,6 +44,51 @@ message S2C_RoomInfoChanged {
     repeated string player_ids = 2;
 }
 
+// 请求房间开始游戏
+message C2S_StartGame {
+    string room_id = 1;
+    string player_id = 2;
+}
+
+message S2C_StartGame {
+    bool error = 1;
+    string error_msg = 2;
+}
+
+// 游戏加载完成通知
+message C2S_GameLoadComplete {
+    string player_id = 1;
+}
+
+message S2C_GameLoadComplete {
+}
+
+// 心跳请求
+message C2S_Heartbeat {
+    string player_id = 1;
+    int64 timestamp = 2;
+}
+
+// 玩家操作输入
+message C2S_Input {
+    string player_id = 1;
+    bytes operations = 2;
+}
+
+message S2C_Frame {
+    int32 frame_number = 1;
+    repeated bytes operations = 2;
+}
+
+message S2C_PlayerFrames {
+    string player_id = 1;
+    repeated S2C_Frame frames = 2;
+}
+
+message S2C_SyncFrames {
+    repeated S2C_PlayerFrames players = 1;
+}
+
 message MessageWrapper {
     oneof msg {
         C2S_EnterRoom c2s_enter_room = 2;
@@ -53,5 +98,15 @@ message MessageWrapper {
         C2S_ExitRoom c2s_exit_room = 6;
         S2C_ExitRoom s2c_exit_room = 7;
         S2C_RoomInfoChanged s2c_room_info_changed = 8;
+        C2S_StartGame c2s_start_game = 9;
+        S2C_StartGame s2c_start_game = 10;
+
+        C2S_Heartbeat c2s_heartbeat = 11;
+
+        C2S_GameLoadComplete c2s_game_load_complete = 12;
+        S2C_GameLoadComplete s2c_game_load_complete = 13;
+
+        C2S_Input c2s_input = 14;
+        S2C_SyncFrames s2c_sync_frames = 15;
     }
 }
