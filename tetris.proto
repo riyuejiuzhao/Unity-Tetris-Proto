@@ -13,6 +13,7 @@ enum OperationType {
   HARD_DROP = 5;      // 硬下落
   SAVE = 6;           // 保存方块
   LEFT_ROTATE = 7;    // 左旋转
+  SOFT_DROP_END = 8;   // 软下落结束
 }
 
 // 玩家操作消息（每次只记录一个操作）
