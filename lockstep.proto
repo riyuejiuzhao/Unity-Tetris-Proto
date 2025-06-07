@@ -58,9 +58,11 @@ message S2C_StartGame {
 // 游戏加载完成通知
 message C2S_GameLoadComplete {
     string player_id = 1;
+    bytes msg = 2;
 }
 
 message S2C_GameLoadComplete {
+    repeated C2S_GameLoadComplete msg = 1;
 }
 
 // 心跳请求
