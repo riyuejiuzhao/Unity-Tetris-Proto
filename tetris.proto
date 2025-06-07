@@ -18,5 +18,6 @@ enum OperationType {
 
 // 玩家操作消息（每次只记录一个操作）
 message PlayerControl {
-  OperationType operation = 1;  // 操作类型
+  int32 seed = 1;
+  OperationType operation = 2;  // 操作类型
 }
